@@ -191,22 +191,22 @@ if [[ "$DELETE_KCC" != false ]]; then
   # stay in current dir
   # will take up to 15-45 min and may hang unless liens are removed
   # 3 problematic projects
-  gcloud config set project audit-prj-id-oldv1
-  AUDIT_LIEN=$(gcloud alpha resource-manager liens list)
-  gcloud alpha resource-manager liens delete $AUDIT_LIEN
+#  gcloud config set project audit-prj-id-oldv1
+#  AUDIT_LIEN=$(gcloud alpha resource-manager liens list)
+#  gcloud alpha resource-manager liens delete $AUDIT_LIEN
 
-  gcloud config set project net-host-prj-prod-oldv1
-  PROD_LIEN=$(gcloud alpha resource-manager liens list)
-  gcloud alpha resource-manager liens delete $PROD_LIEN
+#  gcloud config set project net-host-prj-prod-oldv1
+#  PROD_LIEN=$(gcloud alpha resource-manager liens list)
+#  gcloud alpha resource-manager liens delete $PROD_LIEN
 
-  gcloud config set project net-host-prj-nonprod-oldv1
-  NONPROD_LIEN=$(gcloud alpha resource-manager liens list)
-  gcloud alpha resource-manager liens delete $NONPROD_LIEN
+#  gcloud config set project net-host-prj-nonprod-oldv1
+#  NONPROD_LIEN=$(gcloud alpha resource-manager liens list)
+#  gcloud alpha resource-manager liens delete $NONPROD_LIEN
 
-  kpt live destroy landing-zone
+#  kpt live destroy landing-zone
 
   # delete kpt pkg get
-  rm -rf landing-zone
+ # rm -rf landing-zone
   # https://cloud.google.com/sdk/gcloud/reference/anthos/config/controller/delete
   echo "Delete Cluster ${CLUSTER} in region ${REGION}"
   startd=`date +%s`
