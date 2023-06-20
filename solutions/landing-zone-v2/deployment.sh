@@ -91,12 +91,16 @@ if [[ "$CREATE_KCC" != false ]]; then
   gcloud beta billing projects link ${CC_PROJECT_ID} --billing-account ${BILLING_ID}
   # enable apis
   echo "Enabling APIs"
+  
   gcloud services enable krmapihosting.googleapis.com 
   gcloud services enable container.googleapis.com
   #compute.googleapis.com
   gcloud services enable cloudresourcemanager.googleapis.com 
   gcloud services enable accesscontextmanager.googleapis.com 
   gcloud services enable cloudbilling.googleapis.com
+  gcloud services enable serviceusage.googleapis.com
+  gcloud services enable servicedirectory.googleapis.com
+  gcloud services enable dns.googleapis.com
 
   # create VPC
   echo "Create VPC: ${NETWORK}"
@@ -109,7 +113,7 @@ if [[ "$CREATE_KCC" != false ]]; then
   # 3 KCC clusters max per region with 25 vCPU default quota
   startb=`date +%s`
   echo "Creating Anthos KCC autopilot cluster ${CLUSTER} in region ${REGION} in subnet ${SUBNET} off VPC ${NETWORK}"
-  gcloud alpha anthos config controller create $CLUSTER --location $REGION --network $NETWORK --subnet $SUBNET --full-management
+  gcloud anthos config controller create $CLUSTER --location $REGION --network $NETWORK --subnet $SUBNET --full-management
   endb=`date +%s`
   runtimeb=$((endb-startb))
   echo "Cluster create time: ${runtimeb} sec"
@@ -137,7 +141,10 @@ if [[ "$DEPLOY_LZ" != false ]]; then
   # https://github.com/GoogleCloudPlatform/pubsec-declarative-toolkit/tree/main/solutions/landing-zone#0-set-default-logging-storage-location
 
   gcloud organizations add-iam-policy-binding "${ORG_ID}" --member "user:${EMAIL}" --role roles/logging.admin
-  gcloud alpha logging settings update --organization=$ORG_ID --storage-location=$REGION
+  gcloud logging settings update --organization=$ORG_ID --storage-location=$REGION
+
+  # one acm per org
+  gcloud access-context-manager policies list --organization=${ORG_ID}
 
   # Assign Permissions to the KCC Service Account - will need a currently running kcc cluster
   export SA_EMAIL="$(kubectl get ConfigConnectorContext -n config-control -o jsonpath='{.items[0].spec.googleServiceAccount}' 2> /dev/null)"
